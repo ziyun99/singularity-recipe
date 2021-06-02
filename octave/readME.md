@@ -6,8 +6,8 @@ References (for Octave dependencies):
 - Build from source: http://wiki.octave.org/Building
 
 To pull images we built (from Cloud Library):
-- Ubuntu 18.04: `singularity pull docker://gnuoctave/octave:6.2.0`
-- CentOS 7: `singularity pull docker://gnuoctave/octave:6.2.0`
+- Ubuntu 18.04: `singularity pull library://ziyun99/octave/ubuntu18.04-octave:6.2.0`
+- CentOS 7: `singularity library://ziyun99/octave/centos7-octave:6.2.0`
 
 Official Octave docker/singularity image:
 - Source: https://github.com/gnu-octave/docker
