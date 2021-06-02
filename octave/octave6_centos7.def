@@ -1,0 +1,68 @@
+Bootstrap: docker
+From: centos:7
+
+%labels
+    Version v3
+    Built on CentOS7
+    Octave-6.2.0
+
+ 
+%post
+    cat << EOF > temp.sh
+    #!bin/bash
+    source ~/.bashrc
+    gcc --version
+    wget https://ftpmirror.gnu.org/octave/octave-6.2.0.tar.gz 
+    tar -xzf octave-6.2.0.tar.gz
+    mkdir /usr/local/my_octave    
+    cd octave-6.2.0
+    mkdir .build
+    cd    .build
+    
+    ./../configure --prefix=/usr/local/my_octave
+    make -j4
+    make install
+EOF
+    
+    # Installing Dependencies for CentOS
+    yum -y install epel-release    
+    yum -y install yum-utils
+    yum-builddep -y octave
+    yum -y install qt-devel mercurial gcc-c++ lapack-devel libtool
+    yum -y install epstool transfig pstoedit qscintilla-devel
+    yum -y install libcanberra-gtk libatk-bridge-2.0.so.0
+    
+    # wget needed to get Octave 6.2.0
+    yum -y install wget
+    yum -y install make
+    yum -y groups mark install "Development Tools"
+    
+    # require a gcc of at least version 6
+    yum -y install centos-release-scl
+    yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
+    echo 'source scl_source enable devtoolset-8' >> ~/.bashrc
+
+    # build from source
+    bash temp.sh
+    ln -s /usr/local/my_octave/bin/octave /usr/local/bin/octave
+    echo 'Completed Post!'
+
+
+%environment
+    export LC_ALL=C
+
+
+%runscript
+   octave "$@"
+
+
+%help 
+    Octave v6.2.0 running on an CentOS 7.
+
+    Running the container with no input will start a CLI session. Or you can
+    run the container with a script as input. 
+
+    "singularity run octave_image.sif" starts a CLI session.
+    "singularity run octave_image.sif --gui" starts a GUI session.
+    "singularity shell octave_image.sif" starts an interactive terminal.
+    "singularity exec octave_image.sif octave my_file.m" runs the container with the script as input.

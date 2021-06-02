@@ -1,0 +1,53 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+%labels 
+    Built on Ubuntu 18.04
+    Octave-6.2.0
+
+
+%post
+    # Installing Dependencies for Ubuntu 18.04
+    apt-get -y update
+    apt install -y software-properties-common
+    apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+    apt-get -y install wget
+    apt-get -y install gcc-8 g++-8 gfortran-7 make libblas-dev liblapack-dev libpcre3-dev libarpack2-dev libcurl4-gnutls-dev epstool libfftw3-dev transfig libfltk1.3-dev libfontconfig1-dev libfreetype6-dev libgl2ps-dev libglpk-dev libreadline-dev gnuplot-x11 libgraphicsmagick++1-dev libhdf5-serial-dev openjdk-8-jdk libsndfile1-dev llvm-dev lpr texinfo libgl1-mesa-dev libosmesa6-dev pstoedit portaudio19-dev libqhull-dev libqrupdate-dev libqscintilla2-dev libsuitesparse-dev texlive texlive-generic-recommended libxft-dev zlib1g-dev autoconf automake bison flex gperf gzip icoutils librsvg2-bin libtool perl rsync tar qtbase5-dev qttools5-dev qttools5-dev-tools libqscintilla2-qt5-dev
+    apt-get -y install libsundials-dev
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+    # Build from source
+    wget https://ftpmirror.gnu.org/octave/octave-6.2.0.tar.gz 
+    mkdir /usr/local/my_octave  
+    tar -xzf octave-6.2.0.tar.gz                              
+    cd octave-6.2.0
+    mkdir .build                            
+    cd    .build                            
+    ./../configure --prefix=/usr/local/my_octave
+    make -j4 CC=gcc-8 CPP=g++-8 CXX=g++-8 LD=g++-8                               
+    #make check                              
+    make install
+    ln -s /usr/local/my_octave/bin/octave /usr/local/bin/octave
+
+
+%environment
+    export PATH=$PATH:/usr/bin:/usr/local/bin:/usr/local/bin/octave
+    export LC_ALL=C
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
+
+
+%runscript
+    octave "$@"
+
+
+%help 
+    Octave v6.2.0 running on an Ubuntu 18.04.
+
+    Running the container with no input will start a CLI session. Or you can
+    run the container with a script as input. 
+
+    "singularity run octave_image.sif" starts a CLI session.
+    "singularity run octave_image.sif --gui" starts a GUI session.
+    "singularity shell octave_image.sif" starts an interactive terminal.
+    "singularity exec octave_image.sif octave my_file.m" runs the container with the script as input.
