@@ -9,7 +9,7 @@ Singularity image of [GNU Octave](https://www.gnu.org/software/octave/) for high
 
 ### To pull the [images](https://cloud.sylabs.io/library/ziyun99/gnu-octave) we built (from Cloud Library):
 - Ubuntu 18.04 [(2.1GB)](https://cloud.sylabs.io/library/ziyun99/gnu-octave/ubuntu18.04_octave-6.2.0): `singularity pull library://ziyun99/gnu-octave/ubuntu18.04_octave-6.2.0:v0` 
-- CentOS 7 [(1.7GB)](https://cloud.sylabs.io/library/ziyun99/gnu-octave/centos7_octave_6.2.0.sif): `singularity pull library://ziyun99/gnu-octave/centos7_octave-6.2.0.def:v0`
+- CentOS 7 [(1.7GB)](https://cloud.sylabs.io/library/ziyun99/gnu-octave/centos7_octave-6.2.0.sif): `singularity pull library://ziyun99/gnu-octave/centos7_octave-6.2.0.def:v0`
 
 ### To run the images:
 - `singularity run octave_image.sif` starts a CLI session.
