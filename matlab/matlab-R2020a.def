@@ -1,0 +1,52 @@
+Bootstrap: docker
+From: centos:7
+
+%labels
+  MATLAB R2020a
+  CentOS 7
+
+%setup
+  # Copy the installation files directory into the container root
+  # 'installer_input.txt' must be edited accordingly to set fileInstallationKey and agreeToLicense=yes
+  cp -R ./MathWorks/R2020a_all ${SINGULARITY_ROOTFS}/matlab_installer
+
+%post
+  # install C and Java compilers for simulink / other products
+  yum -y install wget gcc gcc-c++ glibc-static libstdc++-static
+  yum -y install mpfr gmp  *mpc* bzip2 make
+  wget http://mirrors.concertpass.com/gcc/releases/gcc-6.3.0/gcc-6.3.0.tar.gz
+  tar -xf gcc-6.3.0.tar.gz
+  cd gcc-6.3.0
+  ./contrib/download_prerequisites 
+  mkdir gcc-build-6.3.0
+  cd gcc-build-6.3.0 
+  ../configure -enable-checking=release -enable-languages=c,c++ -disable-multilib
+  make -j4
+  make install
+  cd /
+  rm -R gcc-6.3.0.tar.gz gcc-6.3.0
+  gcc --version
+  yum -y install java-1.8.0-openjdk-devel 
+
+  # install Matlab from installation files (using File Installation Key)
+  yum -y install libXmu.x86_64
+  cd /matlab_installer
+  chmod +x ./install
+  ./install -mode silent \
+  -inputFile ./installer_input.txt \
+  -outputFile /tmp/matlab/install.log \
+  -destinationFolder /usr/local/MATLAB
+  # cat tail /tmp/matlab/install.log  
+  rm -R /matlab_installer
+  ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
+  ln -s /usr/local/MATLAB/bin/mex /usr/local/bin/mex
+
+  yum -y install which
+  mex -setup C++
+  mex -setup FORTRAN
+
+%environment
+  export MLM_LICENSE_FILE=27000@172.18.174.18 
+
+%runscript
+  matlab -c MLM_LICENSE_FILE=27000@172.18.174.18
